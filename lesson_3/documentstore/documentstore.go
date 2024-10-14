@@ -71,12 +71,10 @@ func Delete(key string) bool {
 		return false
 	}
 
-	u.Del(store, targetDocIdx)
+	u.Delete(store, targetDocIdx)
 	return true
 }
 
 func List() []Document {
-	// А якщо я віддам поінтер на приватну змінну через геттер, далі той хто отримає зможе робити з нею, все що завгодно?
-
 	return store
 }

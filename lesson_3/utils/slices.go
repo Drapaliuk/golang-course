@@ -1,6 +1,6 @@
 package utils
 
-func Del[T any](s []T, idx int) []T {
+func Delete[T any](s []T, idx int) []T {
 	if idx < 0 || idx >= len(s) {
 		return s
 	}
