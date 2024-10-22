@@ -5,15 +5,30 @@ import (
 	u "lesson_3/utils"
 )
 
+// Collection - дає можливість зберігати ат отримувати документи.
+// У кожної колекції можна задати (через конфіг) яке саме поле у документа вважати primary ключем.
+
 type Collection struct {
+	Configs   CollectionConfig
 	Documents []Document
+}
+
+func NewCollection(cfg CollectionConfig) *Collection {
+	return &Collection{
+		Configs: cfg,
+	}
 }
 
 type CollectionConfig struct {
 	PrimaryKey string
+	Name       string
 }
 
 func (s *Collection) Put(doc Document) error {
+	// if doc[s.Configs.PrimaryKey] {
+	// 	// як?
+	// }
+
 	if len(doc.key) == 0 {
 		return fmt.Errorf("Error: Document must have field \"key\"")
 	}
