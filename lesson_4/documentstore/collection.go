@@ -25,7 +25,9 @@ type CollectionConfig struct {
 }
 
 func (s *Collection) Put(doc Document) error {
-	// if doc[s.Configs.PrimaryKey] {
+	ok, pk := doc.Fields[s.Configs.PrimaryKey]
+
+	// if !ok {
 	// 	// як?
 	// }
 

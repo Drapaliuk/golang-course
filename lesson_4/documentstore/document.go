@@ -17,12 +17,12 @@ type DocumentField struct {
 }
 
 type Document struct {
-	key    string
+	Key    string
 	Fields map[string]DocumentField
 }
 
 func NewDocument(key string) Document {
 	return Document{
-		key: key,
+		Key: key,
 	}
 }
