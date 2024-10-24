@@ -1,9 +1,11 @@
 package documentstore
 
-import u "lesson_3/utils"
+import (
+	u "lesson_4/utils"
+)
 
 type Store struct {
-	Collections []Collection
+	Collections []*Collection
 }
 
 func NewStore() *Store {
@@ -11,7 +13,7 @@ func NewStore() *Store {
 }
 
 func (s *Store) CreateCollection(cfg *CollectionConfig) (bool, *Collection) {
-	isUsedName := u.Some(s.Collections, func(el Collection, _ int) bool {
+	isUsedName := u.Some(s.Collections, func(el *Collection, _ int) bool {
 		return el.Configs.Name == cfg.Name
 	})
 
@@ -19,23 +21,26 @@ func (s *Store) CreateCollection(cfg *CollectionConfig) (bool, *Collection) {
 		return false, nil
 	}
 
-	return true, NewCollection(*cfg)
+	newCollection := NewCollection(*cfg)
+	s.Collections = append(s.Collections, newCollection)
+
+	return true, newCollection
 }
 
 func (s *Store) GetCollection(name string) (bool, *Collection) {
-	collection := u.Find(s.Collections, func(el Collection, _ int) bool {
-		return el.Configs.Name == name
+	collection := u.Find(s.Collections, func(c *Collection, _ int) bool {
+		return c.Configs.Name == name
 	})
 
 	if collection == nil {
 		return false, nil
 	} else {
-		return true, collection
+		return true, *collection
 	}
 }
 
 func (s *Store) DeleteCollection(name string) bool {
-	collectionIdx := u.FindIndex(s.Collections, func(el Collection, _ int) bool {
+	collectionIdx := u.FindIndex(s.Collections, func(el *Collection, _ int) bool {
 		return el.Configs.Name == name
 	})
 
@@ -45,4 +50,10 @@ func (s *Store) DeleteCollection(name string) bool {
 
 	// Зробити щоб delete повертав true/false
 	s.Collections = u.Delete(s.Collections, collectionIdx)
+
+	return true
+}
+
+func (s *Store) CollectionsList() *[]*Collection {
+	return &s.Collections
 }

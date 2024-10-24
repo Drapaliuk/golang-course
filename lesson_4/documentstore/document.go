@@ -2,8 +2,6 @@ package documentstore
 
 type DocumentFieldType string
 
-var store = []Document{}
-
 const (
 	DocumentFieldTypeString DocumentFieldType = "string"
 	DocumentFieldTypeNumber DocumentFieldType = "number"
@@ -12,17 +10,19 @@ const (
 	DocumentFieldTypeObject DocumentFieldType = "object"
 )
 
+type Fields map[string]DocumentField
+
 type DocumentField struct {
-	Type DocumentFieldType
+	Type  DocumentFieldType
+	Value any
 }
 
 type Document struct {
-	Key    string
-	Fields map[string]DocumentField
+	Fields
 }
 
-func NewDocument(key string) Document {
-	return Document{
-		Key: key,
+func NewDocument(fields map[string]DocumentField) *Document {
+	return &Document{
+		Fields: fields,
 	}
 }

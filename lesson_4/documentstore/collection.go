@@ -2,15 +2,12 @@ package documentstore
 
 import (
 	"fmt"
-	u "lesson_3/utils"
+	u "lesson_4/utils"
 )
-
-// Collection - дає можливість зберігати ат отримувати документи.
-// У кожної колекції можна задати (через конфіг) яке саме поле у документа вважати primary ключем.
 
 type Collection struct {
 	Configs   CollectionConfig
-	Documents []Document
+	Documents []*Document
 }
 
 func NewCollection(cfg CollectionConfig) *Collection {
@@ -20,59 +17,59 @@ func NewCollection(cfg CollectionConfig) *Collection {
 }
 
 type CollectionConfig struct {
-	PrimaryKey string
+	PrimaryKey string // зробити як дженерик
 	Name       string
 }
 
-func (s *Collection) Put(doc Document) error {
-	ok, pk := doc.Fields[s.Configs.PrimaryKey]
+func (s *Collection) GetPk() string {
+	return s.Configs.PrimaryKey
+}
 
-	// if !ok {
-	// 	// як?
-	// }
+func (c *Collection) Put(doc *Document) error {
+	docPk, ok := doc.Fields[c.GetPk()]
 
-	if len(doc.key) == 0 {
+	if !ok {
 		return fmt.Errorf("Error: Document must have field \"key\"")
 	}
 
-	isKeyExists := u.Some(store, func(storedDoc Document, _ int) bool {
-		return storedDoc.key == doc.key
+	isUsedPk := u.Some(c.Documents, func(el *Document, _ int) bool {
+		return doc.Fields[c.GetPk()].Value == docPk
 	})
 
-	if isKeyExists {
-		return fmt.Errorf("Error: Document with key %d exists already", doc.key)
+	if isUsedPk {
+		return fmt.Errorf("Error: This primary key used")
 	}
 
-	store = append(store, doc)
+	c.Documents = append(c.Documents, doc)
 
 	return nil
 }
 
-func (s *Collection) Get(key string) (bool, *Document) {
-	docPointer := u.Find(store, func(doc Document, _ int) bool {
-		return doc.key == key
+func (c *Collection) Get(key string) (bool, *Document) {
+	docPointer := u.Find(c.Documents, func(doc *Document, _ int) bool {
+		return doc.Fields[c.GetPk()].Value == key
 	})
 
 	if docPointer != nil {
-		return true, docPointer
+		return true, *docPointer
 	} else {
 		return false, nil
 	}
 }
 
-func (s *Collection) Delete(key string) bool {
-	targetDocIdx := u.FindIndex(store, func(doc Document, _ int) bool {
-		return doc.key == key
+func (c *Collection) Delete(key string) bool {
+	targetDocIdx := u.FindIndex(c.Documents, func(doc *Document, _ int) bool {
+		return doc.Fields[c.GetPk()].Value == key
 	})
 
 	if targetDocIdx == -1 {
 		return false
 	}
 
-	u.Delete(store, targetDocIdx)
+	u.Delete(c.Documents, targetDocIdx)
 	return true
 }
 
-func (s *Collection) List() []Document {
-	return s.Documents
+func (s *Collection) List() *[]*Document {
+	return &s.Documents
 }
