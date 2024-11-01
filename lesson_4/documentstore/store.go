@@ -5,15 +5,15 @@ import (
 )
 
 type Store struct {
-	Collections []*Collection
+	Collections []Collection
 }
 
-func NewStore() *Store {
-	return &Store{}
+func NewStore() Store {
+	return Store{}
 }
 
-func (s *Store) CreateCollection(cfg *CollectionConfig) (bool, *Collection) {
-	isUsedName := u.Some(s.Collections, func(el *Collection, _ int) bool {
+func (s *Store) CreateCollection(cfg CollectionConfig) (bool, *Collection) {
+	isUsedName := u.Some(s.Collections, func(el Collection, _ int) bool {
 		return el.Configs.Name == cfg.Name
 	})
 
@@ -21,26 +21,26 @@ func (s *Store) CreateCollection(cfg *CollectionConfig) (bool, *Collection) {
 		return false, nil
 	}
 
-	newCollection := NewCollection(*cfg)
+	newCollection := NewCollection(cfg)
 	s.Collections = append(s.Collections, newCollection)
 
-	return true, newCollection
+	return true, &newCollection
 }
 
 func (s *Store) GetCollection(name string) (bool, *Collection) {
-	collection := u.Find(s.Collections, func(c *Collection, _ int) bool {
+	collection := u.Find(s.Collections, func(c Collection, _ int) bool {
 		return c.Configs.Name == name
 	})
 
 	if collection == nil {
 		return false, nil
 	} else {
-		return true, *collection
+		return true, collection
 	}
 }
 
 func (s *Store) DeleteCollection(name string) bool {
-	collectionIdx := u.FindIndex(s.Collections, func(el *Collection, _ int) bool {
+	collectionIdx := u.FindIndex(s.Collections, func(el Collection, _ int) bool {
 		return el.Configs.Name == name
 	})
 
@@ -54,6 +54,6 @@ func (s *Store) DeleteCollection(name string) bool {
 	return true
 }
 
-func (s *Store) CollectionsList() *[]*Collection {
-	return &s.Collections
+func (s *Store) CollectionsList() []Collection {
+	return s.Collections
 }

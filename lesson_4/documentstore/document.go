@@ -21,8 +21,8 @@ type Document struct {
 	Fields
 }
 
-func NewDocument(fields map[string]DocumentField) *Document {
-	return &Document{
+func NewDocument(fields map[string]DocumentField) Document {
+	return Document{
 		Fields: fields,
 	}
 }

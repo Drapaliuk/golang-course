@@ -7,11 +7,11 @@ import (
 
 type Collection struct {
 	Configs   CollectionConfig
-	Documents []*Document
+	Documents []Document
 }
 
-func NewCollection(cfg CollectionConfig) *Collection {
-	return &Collection{
+func NewCollection(cfg CollectionConfig) Collection {
+	return Collection{
 		Configs: cfg,
 	}
 }
@@ -25,19 +25,19 @@ func (s *Collection) GetPk() string {
 	return s.Configs.PrimaryKey
 }
 
-func (c *Collection) Put(doc *Document) error {
+func (c *Collection) Put(doc Document) error {
 	docPk, ok := doc.Fields[c.GetPk()]
 
 	if !ok {
 		return fmt.Errorf("Error: Document must have field \"key\"")
 	}
 
-	isUsedPk := u.Some(c.Documents, func(el *Document, _ int) bool {
-		return doc.Fields[c.GetPk()].Value == docPk
+	isUsedPk := u.Some(c.Documents, func(el Document, _ int) bool {
+		return doc.Fields[c.GetPk()].Value == docPk.Value
 	})
 
 	if isUsedPk {
-		return fmt.Errorf("Error: This primary key used")
+		return fmt.Errorf("primary key \"%v\" used", docPk.Value)
 	}
 
 	c.Documents = append(c.Documents, doc)
@@ -46,19 +46,19 @@ func (c *Collection) Put(doc *Document) error {
 }
 
 func (c *Collection) Get(key string) (bool, *Document) {
-	docPointer := u.Find(c.Documents, func(doc *Document, _ int) bool {
+	docPointer := u.Find(c.Documents, func(doc Document, _ int) bool {
 		return doc.Fields[c.GetPk()].Value == key
 	})
 
 	if docPointer != nil {
-		return true, *docPointer
+		return true, docPointer
 	} else {
 		return false, nil
 	}
 }
 
 func (c *Collection) Delete(key string) bool {
-	targetDocIdx := u.FindIndex(c.Documents, func(doc *Document, _ int) bool {
+	targetDocIdx := u.FindIndex(c.Documents, func(doc Document, _ int) bool {
 		return doc.Fields[c.GetPk()].Value == key
 	})
 
@@ -66,10 +66,10 @@ func (c *Collection) Delete(key string) bool {
 		return false
 	}
 
-	u.Delete(c.Documents, targetDocIdx)
+	c.Documents = u.Delete(c.Documents, targetDocIdx)
 	return true
 }
 
-func (s *Collection) List() *[]*Document {
-	return &s.Documents
+func (s *Collection) List() []Document {
+	return s.Documents
 }
