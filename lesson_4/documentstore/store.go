@@ -48,7 +48,6 @@ func (s *Store) DeleteCollection(name string) bool {
 		return false
 	}
 
-	// Зробити щоб delete повертав true/false
 	s.Collections = u.Delete(s.Collections, collectionIdx)
 
 	return true
