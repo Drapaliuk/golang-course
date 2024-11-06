@@ -49,29 +49,3 @@ func Some[T any](s []T, cb func(el T, i int) bool) bool {
 
 	return false
 }
-
-func ForEach[T any](s []T, cb func(el T, i int)) {
-	for i, el := range s {
-		cb(el, i)
-	}
-}
-
-func Map[T any](s []T, cb func(el T, i int) T) []T {
-	res := []T{}
-
-	for i, el := range s {
-		res = append(res, cb(el, i))
-	}
-
-	return res
-}
-
-func MapB[T any, K any](input []T, transform func(T) K) []K {
-	result := make([]K, len(input))
-
-	for i, v := range input {
-		result[i] = transform(v)
-	}
-
-	return result
-}
