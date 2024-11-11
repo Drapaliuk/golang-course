@@ -1,9 +1,14 @@
 package documentstore
 
 import (
-	"fmt"
+	"errors"
 	u "lesson_5/utils"
 )
+
+var ErrDocMustHaveFieldKey = errors.New("document must have field \"key\"")
+var ErrDocPrimaryKeyUsed = errors.New("document must have field \"key\"")
+var ErrDocumentNotFound = errors.New("document not found")
+var ErrDeleteDocument = errors.New("error during document deleting")
 
 type Collection struct {
 	Configs   CollectionConfig
@@ -29,7 +34,7 @@ func (c *Collection) Put(doc Document) error {
 	docPk, ok := doc.Fields[c.GetPk()]
 
 	if !ok {
-		return fmt.Errorf("Error: Document must have field \"key\"")
+		return ErrDocMustHaveFieldKey
 	}
 
 	isUsedPk := u.Some(c.Documents, func(el Document, _ int) bool {
@@ -37,7 +42,7 @@ func (c *Collection) Put(doc Document) error {
 	})
 
 	if isUsedPk {
-		return fmt.Errorf("primary key \"%v\" used", docPk.Value)
+		return ErrDocPrimaryKeyUsed
 	}
 
 	c.Documents = append(c.Documents, doc)
@@ -45,29 +50,32 @@ func (c *Collection) Put(doc Document) error {
 	return nil
 }
 
-func (c *Collection) Get(key string) (bool, *Document) {
+func (c *Collection) Get(key string) (*Document, error) {
 	docPointer := u.Find(c.Documents, func(doc Document, _ int) bool {
 		return doc.Fields[c.GetPk()].Value == key
 	})
 
 	if docPointer != nil {
-		return true, docPointer
+		return docPointer, nil
 	} else {
-		return false, nil
+		return nil, ErrDocumentNotFound
 	}
 }
 
-func (c *Collection) Delete(key string) bool {
+func (c *Collection) Delete(key string) error {
 	targetDocIdx := u.FindIndex(c.Documents, func(doc Document, _ int) bool {
 		return doc.Fields[c.GetPk()].Value == key
 	})
 
 	if targetDocIdx == -1 {
-		return false
+		return errors.Join(
+			ErrDeleteDocument,
+			ErrDocumentNotFound,
+		)
 	}
 
 	c.Documents = u.Delete(c.Documents, targetDocIdx)
-	return true
+	return nil
 }
 
 func (s *Collection) List() []Document {

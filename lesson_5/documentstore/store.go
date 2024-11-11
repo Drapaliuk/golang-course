@@ -1,8 +1,13 @@
 package documentstore
 
 import (
+	"errors"
 	u "lesson_5/utils"
 )
+
+var ErrCollectionAlreadyExists = errors.New("collection already exists")
+var ErrCollectionNotFound = errors.New("collection not found")
+var ErrDeleteCollection = errors.New("error during document collection")
 
 type Store struct {
 	Collections []Collection
@@ -12,45 +17,48 @@ func NewStore() Store {
 	return Store{}
 }
 
-func (s *Store) CreateCollection(cfg CollectionConfig) (bool, *Collection) {
+func (s *Store) CreateCollection(cfg CollectionConfig) (*Collection, error) {
 	isUsedName := u.Some(s.Collections, func(el Collection, _ int) bool {
 		return el.Configs.Name == cfg.Name
 	})
 
 	if isUsedName {
-		return false, nil
+		return nil, ErrCollectionAlreadyExists
 	}
 
 	newCollection := NewCollection(cfg)
 	s.Collections = append(s.Collections, newCollection)
 
-	return true, &newCollection
+	return &newCollection, nil
 }
 
-func (s *Store) GetCollection(name string) (bool, *Collection) {
+func (s *Store) GetCollection(name string) (*Collection, error) {
 	collection := u.Find(s.Collections, func(c Collection, _ int) bool {
 		return c.Configs.Name == name
 	})
 
 	if collection == nil {
-		return false, nil
+		return nil, ErrCollectionNotFound
 	} else {
-		return true, collection
+		return collection, nil
 	}
 }
 
-func (s *Store) DeleteCollection(name string) bool {
+func (s *Store) DeleteCollection(name string) error {
 	collectionIdx := u.FindIndex(s.Collections, func(el Collection, _ int) bool {
 		return el.Configs.Name == name
 	})
 
 	if collectionIdx == -1 {
-		return false
+		return errors.Join(
+			ErrDeleteCollection,
+			ErrCollectionNotFound,
+		)
 	}
 
 	s.Collections = u.Delete(s.Collections, collectionIdx)
 
-	return true
+	return nil
 }
 
 func (s *Store) CollectionsList() []Collection {

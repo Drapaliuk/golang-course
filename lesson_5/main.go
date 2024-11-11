@@ -1,55 +1,53 @@
 package main
 
-import (
-	"fmt"
-	ds "lesson_5/documentstore"
-)
+import "fmt"
 
 func main() {
-	store := ds.NewStore()
-	fmt.Println(store)
+	fmt.Println("Works")
+	// store := ds.NewStore()
+	// fmt.Println(store)
 
-	isCreatedCollection, _ := store.CreateCollection(ds.CollectionConfig{
-		PrimaryKey: "name",
-		Name:       "users",
-	})
+	// isCreatedCollection, _ := store.CreateCollection(ds.CollectionConfig{
+	// 	PrimaryKey: "name",
+	// 	Name:       "users",
+	// })
 
-	fmt.Println("Created collection: ", isCreatedCollection)
-	fmt.Println("Collections list: ", store.CollectionsList())
+	// fmt.Println("Created collection: ", isCreatedCollection)
+	// fmt.Println("Collections list: ", store.CollectionsList())
 
-	foundCollection, usersCollection := store.GetCollection("users")
-	fmt.Println("Get collection \"users\": ", foundCollection, usersCollection)
+	// foundCollection, usersCollection := store.GetCollection("users")
+	// fmt.Println("Get collection \"users\": ", foundCollection, usersCollection)
 
-	fmt.Println("Users: ", usersCollection.List())
+	// fmt.Println("Users: ", usersCollection.List())
 
-	user := ds.NewDocument(map[string]ds.DocumentField{
-		"name": {Type: "string", Value: "Jack"},
-		"age":  {Type: "number", Value: 32},
-	})
+	// user := ds.NewDocument(map[string]ds.DocumentField{
+	// 	"name": {Type: "string", Value: "Jack"},
+	// 	"age":  {Type: "number", Value: 32},
+	// })
 
-	usersCollection.Put(user)
-	fmt.Println("Put: done")
+	// usersCollection.Put(user)
+	// fmt.Println("Put: done")
 
-	fmt.Println("Users: ", usersCollection.List())
+	// fmt.Println("Users: ", usersCollection.List())
 
-	putErr := usersCollection.Put(user)
-	if putErr != nil {
-		fmt.Println("Put error: ", putErr)
-	}
+	// putErr := usersCollection.Put(user)
+	// if putErr != nil {
+	// 	fmt.Println("Put error: ", putErr)
+	// }
 
-	isFound, foundUser := usersCollection.Get("Jack")
-	fmt.Println("Get: ", isFound, foundUser)
+	// isFound, foundUser := usersCollection.Get("Jack")
+	// fmt.Println("Get: ", isFound, foundUser)
 
-	isDeleted := usersCollection.Delete("Jack")
-	fmt.Println("Delete: ", isDeleted)
+	// isDeleted := usersCollection.Delete("Jack")
+	// fmt.Println("Delete: ", isDeleted)
 
-	isFoundAfterDelete, foundUserAfterDelete := usersCollection.Get("Jack")
-	fmt.Println("Get after delete: ", isFoundAfterDelete, foundUserAfterDelete)
-	fmt.Println("Users: ", usersCollection.List())
+	// isFoundAfterDelete, foundUserAfterDelete := usersCollection.Get("Jack")
+	// fmt.Println("Get after delete: ", isFoundAfterDelete, foundUserAfterDelete)
+	// fmt.Println("Users: ", usersCollection.List())
 
-	store.DeleteCollection("users")
-	fmt.Println("Collections list: ", store.CollectionsList())
+	// store.DeleteCollection("users")
+	// fmt.Println("Collections list: ", store.CollectionsList())
 
-	foundCollectionAfterDel, usersCollectionAfterDel := store.GetCollection("users")
-	fmt.Println("Get collection \"users\" after delete: ", foundCollectionAfterDel, usersCollectionAfterDel)
+	// foundCollectionAfterDel, usersCollectionAfterDel := store.GetCollection("users")
+	// fmt.Println("Get collection \"users\" after delete: ", foundCollectionAfterDel, usersCollectionAfterDel)
 }
