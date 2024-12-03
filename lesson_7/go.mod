@@ -1,3 +1,3 @@
-module lesson_6
+module lesson_7
 
 go 1.23.1

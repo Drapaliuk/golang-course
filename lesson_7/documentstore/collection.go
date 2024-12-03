@@ -2,7 +2,7 @@ package documentstore
 
 import (
 	"errors"
-	u "lesson_6/utils"
+	u "lesson_7/utils"
 )
 
 var ErrDocMustHaveFieldKey = errors.New("document must have field \"key\"")

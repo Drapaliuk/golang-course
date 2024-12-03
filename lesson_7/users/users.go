@@ -2,7 +2,7 @@ package users
 
 import (
 	"errors"
-	ds "lesson_6/documentstore"
+	ds "lesson_7/documentstore"
 )
 
 var (

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"lesson_6/documentstore"
+	"lesson_7/documentstore"
 	"log"
 )
 
