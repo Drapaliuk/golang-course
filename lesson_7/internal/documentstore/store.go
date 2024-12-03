@@ -2,7 +2,7 @@ package documentstore
 
 import (
 	"errors"
-	u "lesson_7/utils"
+	u "lesson_7/internal/utils"
 )
 
 var ErrCollectionAlreadyExists = errors.New("collection already exists")
